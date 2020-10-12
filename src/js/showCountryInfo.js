@@ -1,4 +1,4 @@
-import { error } from '@pnotify/core';
+import { error, info } from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
 import '@pnotify/core/dist/BrightTheme.css';
 
@@ -14,17 +14,26 @@ inputRef.addEventListener('input', debouncedQuery);
 function showCountryInfo(event) {
   const inputValue = event.target.value;
   countryContainer.innerHTML = '';
-  fetchCountries(inputValue).then((data) => {
-    if (data.length > 10) {
-      error({
-        text: "Too many matches found. Please enter a more specific query."
-      });
-    }
-    else if (data.length > 1 && data.length < 10) {
-      countryListMarkup(data);
-    }
-    else if (data.length === 1) {
-      aboutCountryMarkup(data);
-    }
-  });
+  if (inputValue === '') {
+    return;
+  } else {
+    fetchCountries(inputValue).then((data) => {
+      if (data.length > 10) {
+        error({
+          text: "Too many matches found. Please enter a more specific query."
+        });
+      }
+      else if (data.length > 1 && data.length < 10) {
+        countryListMarkup(data);
+      }
+      else if (data.length === 1) {
+        aboutCountryMarkup(data);
+      } 
+      else if (data.status === 404) {
+        info({
+          text: "Nothing found"
+        });
+      }
+    })
+  };
 };
